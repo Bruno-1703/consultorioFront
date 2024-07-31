@@ -5,27 +5,38 @@ import {
   Typography
 } from "@mui/material";
 import React from "react";
-
+import Calendar from "react-calendar";
+import 'react-calendar/dist/Calendar.css';
 
 const IndexPage: React.FC = () => {
 
-return (
-  <div style={{ display: "flex" }}>
-    <>
+  const [date, setDate] = React.useState(new Date());
+
+  const onDateChange = (newDate: Date) => {
+    setDate(newDate);
+    // Aquí podrías agregar lógica para mostrar las citas del día seleccionado
+  };
+
+  return (
+    <div style={{ display: "flex" }}>
       <Container maxWidth="lg">
         <Typography variant="h4" gutterBottom>
-         Bienvenidos al sistema 👋
+          Bienvenidos al consultorio médico 👩‍⚕️👨‍⚕️
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
             <Paper style={{ padding: "16px" }}>
               <Typography variant="h6" gutterBottom>
-                Main Content
+                Calendario de citas
               </Typography>
-              <Typography variant="body1">
-                This is the main content area where you can display charts,
-                tables, and other components.
+              <Calendar
+                onChange={onDateChange}
+                value={date}
+              />
+              <Typography variant="body1" style={{ marginTop: "16px" }}>
+                Citas para el día: {date.toLocaleDateString()}
               </Typography>
+              {/* Aquí puedes agregar un componente para listar las citas del día seleccionado */}
             </Paper>
           </Grid>
           <Grid item xs={12} md={4}>
@@ -34,25 +45,28 @@ return (
                 Hora actual
               </Typography>
               <Typography variant="body1">
-               {new Date().toLocaleString()}
+                {new Date().toLocaleString()}
               </Typography>
             </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <Paper style={{ padding: "16px" }}>
+            <Paper style={{ padding: "16px", marginTop: "16px" }}>
               <Typography variant="h6" gutterBottom>
-                Full Width Content
+                Información del consultorio
               </Typography>
               <Typography variant="body1">
-                This content stretches the full width of the container.
+                Dirección: Calle AV Pancho Ramirez S/N, Ciudad Sauce De Luna
+              </Typography>
+              <Typography variant="body1">
+                Teléfono: +123 456 7890
+              </Typography>
+              <Typography variant="body1">
+                Horario: Lunes a Sabado, 8:00 a 12:00 AM -16:00 a 21:00 PM
               </Typography>
             </Paper>
           </Grid>
         </Grid>
       </Container>
-    </>
-  </div>
-);
+    </div>
+  );
 };
 
 export default IndexPage;
