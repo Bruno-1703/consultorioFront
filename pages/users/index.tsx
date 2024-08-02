@@ -3,8 +3,8 @@ import Link from "next/link";
 
 import { User } from "../../interfaces";
 import { sampleUserData } from "../../utils/sample-data";
-import Layout from "../../components/Layout";
 import List from "../../components/List";
+import { Layout } from "../../components/layout/Layout";
 
 type Props = {
   items: User[];

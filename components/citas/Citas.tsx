@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { Chip } from "@mui/material";
 
 // Tipo para una Cita
 interface Cita {
@@ -19,8 +20,12 @@ interface Cita {
   motivoConsulta: string;
   fechaSolicitud: string;
   fechaModificacion?: string;
+    hora: string;
+  duracion: string;
   observaciones?: string;
   cancelada: boolean;
+  estado: "confirmada" | "pendiente" | "cancelada" | "completada";
+
   enfermedad: {
     id_enfermedad: string;
     nombre_enf: string;
@@ -38,12 +43,15 @@ interface Cita {
 }
 
 // Datos de ejemplo
-const citas: Cita[] = [
+export const citas: Cita[] = [
   {
     id_cita: "1",
     motivoConsulta: "Consulta general",
     fechaSolicitud: "2024-08-01",
     fechaModificacion: "2024-08-02",
+    estado: "confirmada",
+    hora: '09:00',
+    duracion: '30 min',
     observaciones: "Ninguna",
     cancelada: false,
     enfermedad: [
@@ -54,6 +62,28 @@ const citas: Cita[] = [
       {
         id_estudio: "est1",
         fecha_realizacion: "2024-08-01",
+        codigo_referencia: "A123",
+      },
+    ],
+  },
+  {
+    id_cita: "2",
+    motivoConsulta: "Consulta general",
+    fechaSolicitud: "2024-07-01",
+    fechaModificacion: "2024-08-02",
+    hora: '10:00',
+    duracion: '45 min',
+    estado: "cancelada",
+    observaciones: "URGENTE",
+    cancelada: false,
+    enfermedad: [
+      { id_enfermedad: "enf1", nombre_enf: "COVID-19", fecha: "2024-07-12" },
+    ],
+    medicamento: [{ id_medicamento: "med1", nombre_med: "Paracetamol" }],
+    estudio: [
+      {
+        id_estudio: "PLACA",
+        fecha_realizacion: "2024-07-08",
         codigo_referencia: "A123",
       },
     ],
@@ -98,7 +128,21 @@ function Row(props: { row: Cita }) {
           {row.motivoConsulta}
         </TableCell>
         <TableCell>{row.fechaSolicitud}</TableCell>
-        <TableCell>{row.cancelada ? "Sí" : "No"}</TableCell>
+        <TableCell>    
+          <Chip
+            label={row.estado}
+            color={
+              row.estado === "confirmada"
+                ? "success"
+                : row.estado === "pendiente"
+                ? "warning"
+                : row.estado === "cancelada"
+                ? "error"
+                : "default"
+            }
+            size="small"
+          />
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -174,8 +218,10 @@ export default function CollapsibleTable() {
         padding: 2, // Añade un padding para separar la tabla de los bordes de la pantalla
       }}
     >
-         <TableContainer component={Paper} sx={{ width: "100%", flexGrow: 1, overflow: "auto" }}>
-
+      <TableContainer
+        component={Paper}
+        sx={{ width: "100%", flexGrow: 1, overflow: "auto" }}
+      >
         <Table stickyHeader aria-label="collapsible table">
           <TableHead>
             <TableRow>

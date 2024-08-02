@@ -25,6 +25,8 @@ const InnerContainer = styled(Box)`
 
 type Props = {
   children: React.ReactNode;
+  title?: string; // Add the title prop here
+
 };
 
 export const Layout = (props: Props) => {
