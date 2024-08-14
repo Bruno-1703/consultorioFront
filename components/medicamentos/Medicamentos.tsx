@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import MedicamentoForm from './MedicamentoForm';
 
 // Define the type for a cita
 interface Cita {
@@ -25,6 +26,7 @@ const citas: Cita[] = [
 
 const Medicamentos: React.FC = () => {
   return (
+   <div> 
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
@@ -47,7 +49,11 @@ const Medicamentos: React.FC = () => {
         </TableBody>
       </Table>
     </TableContainer>
-  );
+  
+    <MedicamentoForm/>
+    </div>
+    );
+  
 };
 
 export default Medicamentos;
