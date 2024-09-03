@@ -5,11 +5,23 @@ query getCitas($limit: Int!, $skip: Int!, $where: CitaWhereInput) {
   getCitas(limit: $limit, skip: $skip,  where: $where) {
     edges {
       node {        
-        id_cita
         observaciones
-        cancelada       
+        cancelada    
+        fechaSolicitud
+        motivoConsulta 
+        pacienteId
+        medicamentos {
+          id_medicamento
+          nombre_med
+        }
+        enfermedades{
+          id_enfermedad
+          nombre_enf          
+        }
+  
   
       }
+      
     }
     aggregate {
       count

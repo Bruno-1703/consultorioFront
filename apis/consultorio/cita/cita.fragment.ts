@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 
 export default gql`
     fragment Cita on Cita {
-    id_cita  
+      
     motivoConsulta 
     fechaSolicitud     
     observaciones

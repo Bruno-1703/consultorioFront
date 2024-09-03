@@ -9,29 +9,29 @@ import {
 import React from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
-import { citas } from "../components/citas/Citas";
+
 
 const IndexPage: React.FC = () => {
  // Obtener la fecha actual
  const hoy = new Date().toISOString().split('T')[0];
 
- // Calcular el total de citas para hoy
- const citasHoy = citas.filter(cita => cita.fechaSolicitud === hoy).length;
+//  // Calcular el total de citas para hoy
+//  const citasHoy = citas.filter(cita => cita.fechaSolicitud === hoy).length;
 
- // Encontrar la próxima cita
- const proximaCita = citas.find(cita => new Date(`${cita.fechaSolicitud}T${cita.hora}`) > new Date());
+//  // Encontrar la próxima cita
+//  const proximaCita = citas.find(cita => new Date(`${cita.fechaSolicitud}T${cita.hora}`) > new Date());
 
- // Calcular el resumen de estados
- const resumenEstados = citas.reduce((acc, cita) => {
-   acc[cita.estado] = (acc[cita.estado] || 0) + 1;
-   return acc;
- }, {} as Record<string, number>);
+//  // Calcular el resumen de estados
+//  const resumenEstados = citas.reduce((acc, cita) => {
+//    acc[cita.estado] = (acc[cita.estado] || 0) + 1;
+//    return acc;
+//  }, {} as Record<string, number>);
   const [date, setDate] = React.useState(new Date());
 
   const onDateChange = (newDate: Date) => {
     setDate(newDate);
   };
-
+  const fecha = date?.toLocaleDateString() ||  ''
   return (
     <div style={{ display: "flex" }}>
       <Container maxWidth="lg">
@@ -49,7 +49,7 @@ const IndexPage: React.FC = () => {
                 value={date}
               />
               <Typography variant="body1" style={{ marginTop: "16px" }}>
-                Citas para el día: {date.toLocaleDateString()}
+                Citas para el día: {fecha}
               </Typography>
               {/* Aquí puedes agregar un componente para listar las citas del día seleccionado */}
             </Paper>

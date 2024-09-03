@@ -1,10 +1,11 @@
 import gql from "graphql-tag";
 
 const pacientesQuery = gql`
-query getPacientes($limit: Int!, $skip: Int!, $where: PacienteWhereInput) {
-  getPacientes(limit: $limit, skip: $skip,  where: $where) {
+query getPacientes($take: Int!, $skip: Int!, $where: PacienteWhereInput) {
+  getPacientes(take: $take, skip: $skip,  where: $where) {
     edges {
       node { 
+      id_paciente
       dni
       nombre_paciente
       apellido_paciente

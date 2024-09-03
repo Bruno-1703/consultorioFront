@@ -6,19 +6,18 @@
     "start": "next start",
     "type-check": "tsc",
     "generar": "graphql-codegen -r dotenv/config"
-
   },
   "dependencies": {
     "@apollo/client": "^3.10.4",
-    "@graphql-codegen/cli": "^5.0.2",
-    "@graphql-codegen/typescript-react-apollo": "^4.3.0",
-    "apollo-server-types": "^3.8.0",
-    "graphql-ws": "^5.16.0",
-
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.0",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
+    "@mui/x-date-pickers": "^7.14.0",
+    "apollo-server-types": "^3.8.0",
+    "graphql-ws": "^5.16.0",
     "next": "latest",
     "react": "^18.2.0",
     "react-calendar": "^5.0.0",
