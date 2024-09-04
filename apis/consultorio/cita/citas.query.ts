@@ -9,7 +9,6 @@ query getCitas($limit: Int!, $skip: Int!, $where: CitaWhereInput) {
         cancelada    
         fechaSolicitud
         motivoConsulta 
-        pacienteId
         medicamentos {
           id_medicamento
           nombre_med
@@ -18,7 +17,11 @@ query getCitas($limit: Int!, $skip: Int!, $where: CitaWhereInput) {
           id_enfermedad
           nombre_enf          
         }
-  
+        paciente {
+          id_paciente
+          nombre_paciente
+          dni          
+        }
   
       }
       

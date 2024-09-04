@@ -15,6 +15,11 @@ export default gql`
         id_enfermedad
         nombre_enf
       }  
-   
+      paciente {
+          id_paciente
+          nombre_paciente
+          dni          
+        }
+  
   }
 `;

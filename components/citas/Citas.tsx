@@ -11,15 +11,16 @@ import {
   TableRow,
   Typography,
   Paper,
-  Chip,
-  Button,
   TextField,
-  Checkbox,
-  FormControlLabel,
-  Skeleton,
+  TablePagination,
+  Button,
+  Badge,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import ListIcon from "@mui/icons-material/List"; // Reemplaza por el ícono que prefieras
+import SearchIcon from "@mui/icons-material/Search";
 import { Cita, useGetCitasQuery } from "../../graphql/types";
 import TableSkeleton from "../../utils/TableSkeleton";
 import { FormularioCita } from "./FormularioCita";
@@ -40,7 +41,7 @@ function Row({ row }: { row: Cita }) {
         </TableCell>
         <TableCell>{row.motivoConsulta}</TableCell>
         <TableCell>{row.fechaSolicitud}</TableCell>
-        <TableCell> N/A</TableCell>
+        <TableCell>{row.cancelada ? "Cancelada" : "Pendiente "}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -58,10 +59,10 @@ function Row({ row }: { row: Cita }) {
               <Typography variant="h6" gutterBottom component="div">
                 Datos del Paciente:
                 <Typography variant="body2">
-                 DNI: {row?.paciente?.dni || "N/A"}
+                  DNI: {row?.paciente?.dni || "N/A"}
                 </Typography>
                 <Typography variant="body2">
-                 Nombre: {row?.paciente?.nombre_paciente || "N/A"}
+                  Nombre: {row?.paciente?.nombre_paciente || "N/A"}
                 </Typography>
               </Typography>
             </Box>
@@ -73,17 +74,48 @@ function Row({ row }: { row: Cita }) {
 }
 
 export default function CollapsibleTable() {
-  const { data, loading, error } = useGetCitasQuery({
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [showForm, setShowForm] = React.useState(false);
+
+  const { data, loading, error, refetch } = useGetCitasQuery({
     variables: {
-      limit: 10,
-      skip: 0,
-      where: {},
+      limit: rowsPerPage,
+      skip: page * rowsPerPage,
+      // where: searchTerm ? { motivoConsulta: { contains: searchTerm } } : {},
     },
   });
+
   if (loading) return <TableSkeleton rows={3} columns={5} />;
   if (error) return <p>Error: {error.message}</p>;
+
   const citas = data?.getCitas.edges || [];
-  console.log(data)
+  const totalCount = data?.getCitas.aggregate.count || 0;
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setPage(0); // Reset page when search term changes
+  };
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset page when rows per page changes
+  };
+
+  const handleRefresh = () => {
+    refetch(); // Refresh the data
+  };
+
   return (
     <Box
       sx={{
@@ -94,7 +126,39 @@ export default function CollapsibleTable() {
         padding: 2,
       }}
     >
-      <FormularioCita />
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+        <Button
+          variant="contained"
+          onClick={() => setShowForm(!showForm)}
+          sx={{ mr: 2 }}
+        >
+          {showForm ? "Cancelar" : "Agregar Cita"}
+        </Button>
+        {showForm && <FormularioCita />}
+        <TextField
+          label="Buscar por Motivo de Consulta"
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{ marginRight: 2 }}
+          InputProps={{
+            endAdornment: <SearchIcon />,
+          }}
+        />
+        <IconButton
+          aria-label="refresh"
+          onClick={handleRefresh}
+          sx={{ mr: 2 }}
+        >
+          <RefreshIcon />
+        </IconButton>
+        <Box sx={{ display: "flex", alignItems: "baseline" }}>
+          <Badge badgeContent={totalCount} color="primary">
+            <ListIcon />
+          </Badge>
+        </Box>
+      </Box>
+
       <TableContainer
         component={Paper}
         sx={{ width: "100%", flexGrow: 1, overflow: "auto" }}
@@ -119,12 +183,22 @@ export default function CollapsibleTable() {
                   cancelada: items.node.cancelada,
                   enfermedades: items.node.enfermedades,
                   medicamentos: items.node.medicamentos,
+                  paciente: items.node.paciente,
                 }}
               />
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <TablePagination
+        component="div"
+        count={totalCount}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Box>
   );
 }

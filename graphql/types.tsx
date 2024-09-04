@@ -486,6 +486,11 @@ export const CitaFragmentDoc = gql`
     id_enfermedad
     nombre_enf
   }
+  paciente {
+    id_paciente
+    nombre_paciente
+    dni
+  }
 }
     `;
 export const PacienteFragmentDoc = gql`
@@ -551,7 +556,6 @@ export const GetCitasDocument = gql`
         cancelada
         fechaSolicitud
         motivoConsulta
-        pacienteId
         medicamentos {
           id_medicamento
           nombre_med
@@ -559,6 +563,11 @@ export const GetCitasDocument = gql`
         enfermedades {
           id_enfermedad
           nombre_enf
+        }
+        paciente {
+          id_paciente
+          nombre_paciente
+          dni
         }
       }
     }
@@ -923,14 +932,14 @@ export type GetPacientesQueryHookResult = ReturnType<typeof useGetPacientesQuery
 export type GetPacientesLazyQueryHookResult = ReturnType<typeof useGetPacientesLazyQuery>;
 export type GetPacientesSuspenseQueryHookResult = ReturnType<typeof useGetPacientesSuspenseQuery>;
 export type GetPacientesQueryResult = Apollo.QueryResult<GetPacientesQuery, GetPacientesQueryVariables>;
-export type CitaFragment = { __typename?: 'Cita', motivoConsulta: string, fechaSolicitud: any, observaciones?: string | null, cancelada?: boolean | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null };
+export type CitaFragment = { __typename?: 'Cita', motivoConsulta: string, fechaSolicitud: any, observaciones?: string | null, cancelada?: boolean | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null, paciente?: { __typename?: 'Paciente', id_paciente: string, nombre_paciente?: string | null, dni: string } | null };
 
 export type GetCitaQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type GetCitaQuery = { __typename?: 'Query', getCita?: { __typename?: 'Cita', motivoConsulta: string, fechaSolicitud: any, observaciones?: string | null, cancelada?: boolean | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null } | null };
+export type GetCitaQuery = { __typename?: 'Query', getCita?: { __typename?: 'Cita', motivoConsulta: string, fechaSolicitud: any, observaciones?: string | null, cancelada?: boolean | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null, paciente?: { __typename?: 'Paciente', id_paciente: string, nombre_paciente?: string | null, dni: string } | null } | null };
 
 export type GetCitasQueryVariables = Exact<{
   limit: Scalars['Int']['input'];
@@ -939,7 +948,7 @@ export type GetCitasQueryVariables = Exact<{
 }>;
 
 
-export type GetCitasQuery = { __typename?: 'Query', getCitas: { __typename?: 'CitaResultadoBusqueda', edges: Array<{ __typename?: 'CitaEdge', node: { __typename?: 'Cita', observaciones?: string | null, cancelada?: boolean | null, fechaSolicitud: any, motivoConsulta: string, pacienteId?: string | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
+export type GetCitasQuery = { __typename?: 'Query', getCitas: { __typename?: 'CitaResultadoBusqueda', edges: Array<{ __typename?: 'CitaEdge', node: { __typename?: 'Cita', observaciones?: string | null, cancelada?: boolean | null, fechaSolicitud: any, motivoConsulta: string, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null, paciente?: { __typename?: 'Paciente', id_paciente: string, nombre_paciente?: string | null, dni: string } | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
 
 export type CreateCitaMutationVariables = Exact<{
   data: CitaInput;
