@@ -103,13 +103,13 @@ export type EnfermedadWhereInput = {
 
 export type Estudio = {
   __typename?: 'Estudio';
-  codigo_referencia: Scalars['String']['output'];
-  fecha_realizacion: Scalars['DateTime']['output'];
+  codigo_referencia?: Maybe<Scalars['String']['output']>;
+  fecha_realizacion?: Maybe<Scalars['DateTime']['output']>;
   id_estudio: Scalars['String']['output'];
   medico_solicitante: Scalars['String']['output'];
   observaciones?: Maybe<Scalars['String']['output']>;
   resultado?: Maybe<Scalars['String']['output']>;
-  tipo_estudio: Scalars['String']['output'];
+  tipo_estudio?: Maybe<Scalars['String']['output']>;
   urgente?: Maybe<Scalars['Boolean']['output']>;
 };
 
@@ -120,13 +120,13 @@ export type EstudioEdge = {
 };
 
 export type EstudioInput = {
-  codigo_referencia: Scalars['String']['input'];
-  fecha_realizacion: Scalars['DateTime']['input'];
+  codigo_referencia?: InputMaybe<Scalars['String']['input']>;
+  fecha_realizacion?: InputMaybe<Scalars['DateTime']['input']>;
   id_estudio?: InputMaybe<Scalars['String']['input']>;
-  medico_solicitante: Scalars['String']['input'];
+  medico_solicitante?: InputMaybe<Scalars['String']['input']>;
   observaciones?: InputMaybe<Scalars['String']['input']>;
   resultado?: InputMaybe<Scalars['String']['input']>;
-  tipo_estudio: Scalars['String']['input'];
+  tipo_estudio?: InputMaybe<Scalars['String']['input']>;
   urgente?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -137,11 +137,11 @@ export type EstudioResultadoBusqueda = {
 };
 
 export type EstudioWhereInput = {
-  codigo_referencia: Scalars['String']['input'];
-  fecha_realizacion: Scalars['DateTime']['input'];
+  codigo_referencia?: InputMaybe<Scalars['String']['input']>;
+  fecha_realizacion?: InputMaybe<Scalars['DateTime']['input']>;
   id_estudio?: InputMaybe<Scalars['String']['input']>;
   resultado?: InputMaybe<Scalars['String']['input']>;
-  tipo_estudio: Scalars['String']['input'];
+  tipo_estudio?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Medicamento = {
@@ -192,6 +192,7 @@ export type MedicamentoWhereInput = {
   dosis_hs?: InputMaybe<Scalars['String']['input']>;
   efectos_secundarios?: InputMaybe<Scalars['String']['input']>;
   fecha_vencimiento?: InputMaybe<Scalars['DateTime']['input']>;
+  id_medicamento?: InputMaybe<Scalars['String']['input']>;
   lista_negra?: InputMaybe<Scalars['Boolean']['input']>;
   marca?: InputMaybe<Scalars['String']['input']>;
   nombre_med?: InputMaybe<Scalars['String']['input']>;
@@ -313,11 +314,11 @@ export type Paciente = {
   alergias?: Maybe<Scalars['String']['output']>;
   altura?: Maybe<Scalars['Int']['output']>;
   apellido_paciente?: Maybe<Scalars['String']['output']>;
-  dni: Scalars['String']['output'];
+  dni?: Maybe<Scalars['String']['output']>;
   edad?: Maybe<Scalars['Int']['output']>;
   fecha_nacimiento?: Maybe<Scalars['DateTime']['output']>;
   grupo_sanguineo?: Maybe<Scalars['String']['output']>;
-  id_paciente: Scalars['String']['output'];
+  id_paciente?: Maybe<Scalars['String']['output']>;
   nombre_paciente?: Maybe<Scalars['String']['output']>;
   sexo?: Maybe<Scalars['String']['output']>;
   telefono?: Maybe<Scalars['String']['output']>;
@@ -493,6 +494,32 @@ export const CitaFragmentDoc = gql`
   }
 }
     `;
+export const EstudioFragmentDoc = gql`
+    fragment Estudio on Estudio {
+  id_estudio
+  fecha_realizacion
+  tipo_estudio
+  resultado
+  codigo_referencia
+  observaciones
+  medico_solicitante
+  urgente
+}
+    `;
+export const MedicamentoFragmentDoc = gql`
+    fragment Medicamento on Medicamento {
+  nombre_med
+  marca
+  fecha_vencimiento
+  dosis_hs
+  agente_principal
+  efectos_secundarios
+  lista_negra
+  categoria
+  contraindicaciones
+  prescripcion_requerida
+}
+    `;
 export const PacienteFragmentDoc = gql`
     fragment Paciente on Paciente {
   dni
@@ -555,19 +582,20 @@ export const GetCitasDocument = gql`
         observaciones
         cancelada
         fechaSolicitud
+        pacienteId
         motivoConsulta
+        enfermedades {
+          nombre_enf
+          id_enfermedad
+        }
         medicamentos {
           id_medicamento
           nombre_med
         }
-        enfermedades {
-          id_enfermedad
-          nombre_enf
-        }
         paciente {
+          dni
           id_paciente
           nombre_paciente
-          dni
         }
       }
     }
@@ -770,6 +798,55 @@ export function useCreateEstudioMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateEstudioMutationHookResult = ReturnType<typeof useCreateEstudioMutation>;
 export type CreateEstudioMutationResult = Apollo.MutationResult<CreateEstudioMutation>;
 export type CreateEstudioMutationOptions = Apollo.BaseMutationOptions<CreateEstudioMutation, CreateEstudioMutationVariables>;
+export const GetEstudiosDocument = gql`
+    query getEstudios($take: Int!, $skip: Int!, $where: EstudioWhereInput) {
+  getEstudios(limit: $take, skip: $skip, where: $where) {
+    edges {
+      node {
+        ...Estudio
+      }
+    }
+    aggregate {
+      count
+    }
+  }
+}
+    ${EstudioFragmentDoc}`;
+
+/**
+ * __useGetEstudiosQuery__
+ *
+ * To run a query within a React component, call `useGetEstudiosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEstudiosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEstudiosQuery({
+ *   variables: {
+ *      take: // value for 'take'
+ *      skip: // value for 'skip'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetEstudiosQuery(baseOptions: Apollo.QueryHookOptions<GetEstudiosQuery, GetEstudiosQueryVariables> & ({ variables: GetEstudiosQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetEstudiosQuery, GetEstudiosQueryVariables>(GetEstudiosDocument, options);
+      }
+export function useGetEstudiosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEstudiosQuery, GetEstudiosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetEstudiosQuery, GetEstudiosQueryVariables>(GetEstudiosDocument, options);
+        }
+export function useGetEstudiosSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetEstudiosQuery, GetEstudiosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetEstudiosQuery, GetEstudiosQueryVariables>(GetEstudiosDocument, options);
+        }
+export type GetEstudiosQueryHookResult = ReturnType<typeof useGetEstudiosQuery>;
+export type GetEstudiosLazyQueryHookResult = ReturnType<typeof useGetEstudiosLazyQuery>;
+export type GetEstudiosSuspenseQueryHookResult = ReturnType<typeof useGetEstudiosSuspenseQuery>;
+export type GetEstudiosQueryResult = Apollo.QueryResult<GetEstudiosQuery, GetEstudiosQueryVariables>;
 export const UpdateEstudioDocument = gql`
     mutation UpdateEstudio($data: EstudioInput!, $estudioId: String!) {
   updateEstudio(data: $data, estudioId: $estudioId)
@@ -932,14 +1009,14 @@ export type GetPacientesQueryHookResult = ReturnType<typeof useGetPacientesQuery
 export type GetPacientesLazyQueryHookResult = ReturnType<typeof useGetPacientesLazyQuery>;
 export type GetPacientesSuspenseQueryHookResult = ReturnType<typeof useGetPacientesSuspenseQuery>;
 export type GetPacientesQueryResult = Apollo.QueryResult<GetPacientesQuery, GetPacientesQueryVariables>;
-export type CitaFragment = { __typename?: 'Cita', motivoConsulta: string, fechaSolicitud: any, observaciones?: string | null, cancelada?: boolean | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null, paciente?: { __typename?: 'Paciente', id_paciente: string, nombre_paciente?: string | null, dni: string } | null };
+export type CitaFragment = { __typename?: 'Cita', motivoConsulta: string, fechaSolicitud: any, observaciones?: string | null, cancelada?: boolean | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null, paciente?: { __typename?: 'Paciente', id_paciente?: string | null, nombre_paciente?: string | null, dni?: string | null } | null };
 
 export type GetCitaQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type GetCitaQuery = { __typename?: 'Query', getCita?: { __typename?: 'Cita', motivoConsulta: string, fechaSolicitud: any, observaciones?: string | null, cancelada?: boolean | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null, paciente?: { __typename?: 'Paciente', id_paciente: string, nombre_paciente?: string | null, dni: string } | null } | null };
+export type GetCitaQuery = { __typename?: 'Query', getCita?: { __typename?: 'Cita', motivoConsulta: string, fechaSolicitud: any, observaciones?: string | null, cancelada?: boolean | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null, paciente?: { __typename?: 'Paciente', id_paciente?: string | null, nombre_paciente?: string | null, dni?: string | null } | null } | null };
 
 export type GetCitasQueryVariables = Exact<{
   limit: Scalars['Int']['input'];
@@ -948,7 +1025,7 @@ export type GetCitasQueryVariables = Exact<{
 }>;
 
 
-export type GetCitasQuery = { __typename?: 'Query', getCitas: { __typename?: 'CitaResultadoBusqueda', edges: Array<{ __typename?: 'CitaEdge', node: { __typename?: 'Cita', observaciones?: string | null, cancelada?: boolean | null, fechaSolicitud: any, motivoConsulta: string, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, enfermedades?: Array<{ __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string }> | null, paciente?: { __typename?: 'Paciente', id_paciente: string, nombre_paciente?: string | null, dni: string } | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
+export type GetCitasQuery = { __typename?: 'Query', getCitas: { __typename?: 'CitaResultadoBusqueda', edges: Array<{ __typename?: 'CitaEdge', node: { __typename?: 'Cita', observaciones?: string | null, cancelada?: boolean | null, fechaSolicitud: any, pacienteId?: string | null, motivoConsulta: string, enfermedades?: Array<{ __typename?: 'Enfermedad', nombre_enf: string, id_enfermedad?: string | null }> | null, medicamentos?: Array<{ __typename?: 'Medicamento', id_medicamento?: string | null, nombre_med?: string | null }> | null, paciente?: { __typename?: 'Paciente', dni?: string | null, id_paciente?: string | null, nombre_paciente?: string | null } | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
 
 export type CreateCitaMutationVariables = Exact<{
   data: CitaInput;
@@ -988,6 +1065,17 @@ export type CreateEstudioMutationVariables = Exact<{
 
 export type CreateEstudioMutation = { __typename?: 'Mutation', createEstudio: string };
 
+export type EstudioFragment = { __typename?: 'Estudio', id_estudio: string, fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null };
+
+export type GetEstudiosQueryVariables = Exact<{
+  take: Scalars['Int']['input'];
+  skip: Scalars['Int']['input'];
+  where?: InputMaybe<EstudioWhereInput>;
+}>;
+
+
+export type GetEstudiosQuery = { __typename?: 'Query', getEstudios: { __typename?: 'EstudioResultadoBusqueda', edges: Array<{ __typename?: 'EstudioEdge', node: { __typename?: 'Estudio', id_estudio: string, fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
+
 export type UpdateEstudioMutationVariables = Exact<{
   data: EstudioInput;
   estudioId: Scalars['String']['input'];
@@ -996,6 +1084,8 @@ export type UpdateEstudioMutationVariables = Exact<{
 
 export type UpdateEstudioMutation = { __typename?: 'Mutation', updateEstudio: string };
 
+export type MedicamentoFragment = { __typename?: 'Medicamento', nombre_med?: string | null, marca?: string | null, fecha_vencimiento?: any | null, dosis_hs?: string | null, agente_principal?: string | null, efectos_secundarios?: string | null, lista_negra?: boolean | null, categoria?: string | null, contraindicaciones?: string | null, prescripcion_requerida?: boolean | null };
+
 export type CreatePacienteMutationVariables = Exact<{
   data: PacienteInput;
 }>;
@@ -1003,14 +1093,14 @@ export type CreatePacienteMutationVariables = Exact<{
 
 export type CreatePacienteMutation = { __typename?: 'Mutation', createPaciente: string };
 
-export type PacienteFragment = { __typename?: 'Paciente', dni: string, nombre_paciente?: string | null, apellido_paciente?: string | null, edad?: number | null, altura?: number | null, telefono?: string | null, fecha_nacimiento?: any | null, sexo?: string | null, grupo_sanguineo?: string | null, alergias?: string | null };
+export type PacienteFragment = { __typename?: 'Paciente', dni?: string | null, nombre_paciente?: string | null, apellido_paciente?: string | null, edad?: number | null, altura?: number | null, telefono?: string | null, fecha_nacimiento?: any | null, sexo?: string | null, grupo_sanguineo?: string | null, alergias?: string | null };
 
 export type GetPacienteQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type GetPacienteQuery = { __typename?: 'Query', getPaciente?: { __typename?: 'Paciente', dni: string, nombre_paciente?: string | null, apellido_paciente?: string | null, edad?: number | null, altura?: number | null, telefono?: string | null, fecha_nacimiento?: any | null, sexo?: string | null, grupo_sanguineo?: string | null, alergias?: string | null } | null };
+export type GetPacienteQuery = { __typename?: 'Query', getPaciente?: { __typename?: 'Paciente', dni?: string | null, nombre_paciente?: string | null, apellido_paciente?: string | null, edad?: number | null, altura?: number | null, telefono?: string | null, fecha_nacimiento?: any | null, sexo?: string | null, grupo_sanguineo?: string | null, alergias?: string | null } | null };
 
 export type GetPacientesQueryVariables = Exact<{
   take: Scalars['Int']['input'];
@@ -1019,4 +1109,4 @@ export type GetPacientesQueryVariables = Exact<{
 }>;
 
 
-export type GetPacientesQuery = { __typename?: 'Query', getPacientes: { __typename?: 'PacientesResultadoBusqueda', edges: Array<{ __typename?: 'PacienteEdge', node: { __typename?: 'Paciente', id_paciente: string, dni: string, nombre_paciente?: string | null, apellido_paciente?: string | null, edad?: number | null, altura?: number | null, telefono?: string | null, fecha_nacimiento?: any | null, sexo?: string | null, grupo_sanguineo?: string | null, alergias?: string | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
+export type GetPacientesQuery = { __typename?: 'Query', getPacientes: { __typename?: 'PacientesResultadoBusqueda', edges: Array<{ __typename?: 'PacienteEdge', node: { __typename?: 'Paciente', id_paciente?: string | null, dni?: string | null, nombre_paciente?: string | null, apellido_paciente?: string | null, edad?: number | null, altura?: number | null, telefono?: string | null, fecha_nacimiento?: any | null, sexo?: string | null, grupo_sanguineo?: string | null, alergias?: string | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };

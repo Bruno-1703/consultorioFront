@@ -12,10 +12,6 @@ import {
   Typography, 
   Box, 
   Button, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
   TextField, 
   TablePagination, 
   IconButton, 
@@ -23,35 +19,32 @@ import {
   Badge,
   Tooltip,
 } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import GroupIcon from '@mui/icons-material/Group';
+import PersonIcon from '@mui/icons-material/Person';
+
 import RefreshIcon from '@mui/icons-material/Refresh';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PacienteForm from './PacienteForm';
 import { useGetPacientesQuery } from '../../graphql/types';
+import PacientesDrawer from './pacienteDrawer';
 
 const Pacientes: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [open, setOpen] = React.useState(false);
+  const [showForm, setShowForm] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [selectedPaciente, setSelectedPaciente] = React.useState<any>(null); // Asegúrate de usar el tipo adecuado
 
   const { data, loading, error, refetch } = useGetPacientesQuery({
     variables: {
       take: rowsPerPage,
       skip: page * rowsPerPage,
-      where: { nombre_paciente:  searchTerm } 
+      where: { dni: searchTerm, apellido_paciente: searchTerm, nombre_paciente: searchTerm }
     },
   });
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -69,73 +62,76 @@ const Pacientes: React.FC = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page when rows per page changes
+    setPage(0);
+  };
+
+  const handleOpenDrawer = (paciente: any) => {
+    setSelectedPaciente(paciente);
+    setDrawerOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setDrawerOpen(false);
+    setSelectedPaciente(null);
   };
 
   return (
     <Box sx={{ padding: 3, backgroundColor: '#f5f5f5', borderRadius: 2, boxShadow: 3 }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ marginBottom: 3 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
-          Gestión de Pacientes
-        </Typography>
-        <Badge badgeContent={data?.getPacientes.aggregate.count || 0} color="primary">
-          <NotificationsIcon sx={{ color: '#1976d2' }} />
-        </Badge>
-      </Stack>
+       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ marginBottom: 2 }}>
+    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+      Gestión de Pacientes
+    </Typography>
+  </Stack>
 
-      <Stack direction="row" spacing={2} sx={{ marginBottom: 3 }}>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleOpen}
-          sx={{
-            backgroundColor: '#1976d2',
-            '&:hover': {
-              backgroundColor: '#115293',
-            },
-            fontWeight: 'bold',
-            paddingX: 2,
-          }}
-        >
-          Registrar Paciente
-        </Button>
-        <TextField
-          label="Buscar por Nombre"
-          variant="outlined"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          sx={{ flexGrow: 1 }}
-        />
-        <Tooltip title="Refrescar">
-          <IconButton 
-            onClick={() => refetch()} 
-            color="secondary"
-            sx={{
-              borderRadius: 1,
-              backgroundColor: '#f0f0f0',
-              '&:hover': {
-                backgroundColor: '#e0e0e0',
-              },
-            }}
-          >
-            <RefreshIcon />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle sx={{ backgroundColor: '#1976d2', color: 'white', fontWeight: 'bold' }}>
-          Registrar Paciente
-        </DialogTitle>
-        <DialogContent sx={{ padding: 2 }}>
+  <Stack direction="row" spacing={2} sx={{ marginBottom: 2, alignItems: 'center' }}>
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={() => setShowForm(!showForm)}
+      sx={{
+        backgroundColor: '#1976d2',
+        '&:hover': {
+          backgroundColor: '#115293',
+        },
+        fontWeight: 'bold',
+        paddingX: 2,
+      }}
+    >
+      {showForm ? "Ocultar Formulario" : "Registrar Paciente"}
+    </Button>
+    <TextField
+      label="Buscar por Nombre"
+      variant="outlined"
+      value={searchTerm}
+      onChange={handleSearchChange}
+      sx={{ flexGrow: 1 }}
+    />
+    <Tooltip title="Refrescar">
+      <IconButton
+        onClick={() => refetch()}
+        color="secondary"
+        sx={{
+          borderRadius: 1,
+          backgroundColor: '#f0f0f0',
+          '&:hover': {
+            backgroundColor: '#e0e0e0',
+          },
+        }}
+      >
+        <RefreshIcon />
+      </IconButton>
+    </Tooltip>
+    <Tooltip title="Pacientes">
+      <Badge badgeContent={data?.getPacientes.aggregate.count || 0} color="primary">
+        <PersonIcon sx={{ color: '#1976d2' }} />
+      </Badge>
+    </Tooltip>
+  </Stack>
+      {showForm && (
+        <Box sx={{ marginBottom: 2, padding: 2, backgroundColor: '#e3f2fd', borderRadius: 2 }}>
           <PacienteForm />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="secondary">
-            Cancelar
-          </Button>  
-        </DialogActions>
-      </Dialog>
+        </Box>
+      )}
 
       {loading && (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginY: 3 }}>
@@ -149,46 +145,36 @@ const Pacientes: React.FC = () => {
         </Alert>
       )}
 
-      <TableContainer component={Paper} sx={{ marginTop: 3, boxShadow: 2 }}>
+      <TableContainer component={Paper} sx={{ boxShadow: 2 }}>
         <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#1976d2' }}>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>DNI</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nombre</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Apellido</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Edad</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Altura</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Teléfono</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Fecha de Nacimiento</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Sexo</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Grupo Sanguíneo</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Alergias</TableCell>
-              <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Acciones</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>DNI</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Nombre</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Apellido</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Edad</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Teléfono</TableCell>
+              <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data?.getPacientes?.edges.map((paciente, index) => (
-              <TableRow 
-                key={paciente.node.id_paciente} 
-                sx={{ 
-                  height: 40,
-                  backgroundColor: index % 2 === 0 ? '#fafafa' : '#f5f5f5', 
-                  '&:hover': { backgroundColor: '#e0e0e0' } 
+              <TableRow
+                key={paciente.node.id_paciente}
+                sx={{
+                  backgroundColor: index % 2 === 0 ? '#fafafa' : '#f5f5f5',
+                  '&:hover': { backgroundColor: '#e0e0e0' },
+                  height: '48px',
                 }}
               >
                 <TableCell>{paciente.node.dni}</TableCell>
                 <TableCell>{paciente.node.nombre_paciente}</TableCell>
                 <TableCell>{paciente.node.apellido_paciente}</TableCell>
                 <TableCell>{paciente.node.edad}</TableCell>
-                <TableCell>{paciente.node.altura}</TableCell>
                 <TableCell>{paciente.node.telefono}</TableCell>
-                <TableCell>{new Date(paciente.node.fecha_nacimiento).toLocaleDateString()}</TableCell>
-                <TableCell>{paciente.node.sexo}</TableCell>
-                <TableCell>{paciente.node.grupo_sanguineo}</TableCell>
-                <TableCell>{paciente.node.alergias}</TableCell>
                 <TableCell align="center">
                   <Tooltip title="Visualizar">
-                    <IconButton aria-label="visualizar" color="primary">
+                    <IconButton aria-label="visualizar" color="primary" onClick={() => handleOpenDrawer(paciente.node)}>
                       <VisibilityIcon />
                     </IconButton>
                   </Tooltip>
@@ -217,11 +203,18 @@ const Pacientes: React.FC = () => {
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         sx={{
-          marginTop: 3,
+          marginTop: 2,
           backgroundColor: '#f5f5f5',
           borderRadius: 1,
           boxShadow: 1,
         }}
+      />
+
+      {/* Aquí se agrega el Drawer */}
+      <PacientesDrawer
+        drawerOpen={drawerOpen}
+        handleCloseDrawer={handleCloseDrawer}
+        selectedPaciente={selectedPaciente}
       />
     </Box>
   );

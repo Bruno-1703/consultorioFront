@@ -5,5 +5,8 @@ export const ROUTES = {
   inventory: '/inventory',
   citas: '/citas',
   pacientes: '/pacientes',
+  medicamentos: '/medicamentos',
+  estudios: '/estudios',
+
 
 };

@@ -8,23 +8,23 @@ query getCitas($limit: Int!, $skip: Int!, $where: CitaWhereInput) {
         observaciones
         cancelada    
         fechaSolicitud
+        pacienteId
         motivoConsulta 
-        medicamentos {
-          id_medicamento
-          nombre_med
-        }
         enfermedades{
+          nombre_enf
           id_enfermedad
-          nombre_enf          
         }
-        paciente {
+       medicamentos{
+        id_medicamento
+        nombre_med
+      }
+        paciente{
+          dni
           id_paciente
           nombre_paciente
-          dni          
         }
   
-      }
-      
+      }      
     }
     aggregate {
       count

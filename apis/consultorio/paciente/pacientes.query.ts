@@ -15,7 +15,7 @@ query getPacientes($take: Int!, $skip: Int!, $where: PacienteWhereInput) {
       fecha_nacimiento
       sexo
       grupo_sanguineo
-      alergias       
+      alergias      
      
   
       }

@@ -3,8 +3,12 @@ import {
   ShoppingCart as ShoppingCartIcon,
   People as PeopleIcon,
   AttachMoney as AttachMoneyIcon,
+  
 } from '@mui/icons-material';
+import MedicationIcon from '@mui/icons-material/Medication';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import PersonIcon from '@mui/icons-material/Person';
 import { IMenuItem } from '../types';
 import { ROUTES } from './routes';
 
@@ -23,18 +27,18 @@ export const MENU_LIST: IMenuItem[] = [
   {
     route: ROUTES.pacientes,
     literal: 'Pacientes',
-    Icon: CalendarMonthIcon,
+    Icon: PersonIcon,
   },
-  // {
-  //   route: ROUTES.orders,
-  //   literal: 'Orders',
-  //   Icon: ShoppingCartIcon,
-  // },
-  // {
-  //   route: ROUTES.customers,
-  //   literal: 'Customers',
-  //   Icon: PeopleIcon,
-  // },
+   {
+     route: ROUTES.estudios,
+     literal: 'Estudios',
+     Icon: LibraryBooksIcon,
+   },
+   {
+     route: ROUTES.medicamentos,
+     literal: 'Medicamentos',
+     Icon: MedicationIcon,
+   },
   // {
   //   route: ROUTES.inventory,
   //   literal: 'Inventory',

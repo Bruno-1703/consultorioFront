@@ -1,70 +1,81 @@
 import {
-  Card,
-  CardContent,
   Container,
   Grid,
   Paper,
-  Typography
+  Typography,
 } from "@mui/material";
 import React from "react";
 import Calendar from "react-calendar";
-import 'react-calendar/dist/Calendar.css';
-
+import "react-calendar/dist/Calendar.css";
+import CollapsibleTable from "../components/citas/Citas";
 
 const IndexPage: React.FC = () => {
- // Obtener la fecha actual
- const hoy = new Date().toISOString().split('T')[0];
+  // Obtener la fecha actual
+  const hoy = new Date().toISOString().split("T")[0];
 
-//  // Calcular el total de citas para hoy
-//  const citasHoy = citas.filter(cita => cita.fechaSolicitud === hoy).length;
-
-//  // Encontrar la próxima cita
-//  const proximaCita = citas.find(cita => new Date(`${cita.fechaSolicitud}T${cita.hora}`) > new Date());
-
-//  // Calcular el resumen de estados
-//  const resumenEstados = citas.reduce((acc, cita) => {
-//    acc[cita.estado] = (acc[cita.estado] || 0) + 1;
-//    return acc;
-//  }, {} as Record<string, number>);
   const [date, setDate] = React.useState(new Date());
 
   const onDateChange = (newDate: Date) => {
     setDate(newDate);
   };
-  const fecha = date?.toLocaleDateString() ||  ''
+
+  const fecha = date?.toLocaleDateString() || "";
+
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", background: "#f5f5f5", color: "#333", minHeight: "100vh" }}>
       <Container maxWidth="lg">
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom style={{ color: "#007bff", textAlign: 'center' }}>
           Bienvenidos al consultorio médico 👩‍⚕️👨‍⚕️
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
-            <Paper style={{ padding: "16px" }}>
-              <Typography variant="h6" gutterBottom>
+            <Paper
+              style={{
+                padding: "16px",
+                background: "#ffffff",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                color: "#333",
+              }}
+            >
+              <Typography variant="h6" gutterBottom style={{ color: "#007bff" }}>
                 Calendario de citas
               </Typography>
               <Calendar
                 onChange={onDateChange}
                 value={date}
+                className="react-calendar"
               />
-              <Typography variant="body1" style={{ marginTop: "16px" }}>
+              <Typography variant="body1" style={{ marginTop: "16px", color: "#666" }}>
                 Citas para el día: {fecha}
               </Typography>
-              {/* Aquí puedes agregar un componente para listar las citas del día seleccionado */}
             </Paper>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Paper style={{ padding: "16px" }}>
-              <Typography variant="h6" gutterBottom>
+            <Paper
+              style={{
+                padding: "16px",
+                background: "#ffffff",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                color: "#333",
+              }}
+            >
+              <Typography variant="h6" gutterBottom style={{ color: "#007bff" }}>
                 Hora actual
               </Typography>
               <Typography variant="body1">
                 {new Date().toLocaleString()}
               </Typography>
             </Paper>
-            <Paper style={{ padding: "16px", marginTop: "16px" }}>
-              <Typography variant="h6" gutterBottom>
+            <Paper
+              style={{
+                padding: "16px",
+                marginTop: "16px",
+                background: "#ffffff",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                color: "#333",
+              }}
+            >
+              <Typography variant="h6" gutterBottom style={{ color: "#007bff" }}>
                 Información del consultorio
               </Typography>
               <Typography variant="body1">
@@ -74,11 +85,14 @@ const IndexPage: React.FC = () => {
                 Teléfono: +123 456 7890
               </Typography>
               <Typography variant="body1">
-                Horario: Lunes a Sabado, 8:00 a 12:00 AM -16:00 a 21:00 PM
+                Horario: Lunes a Sábado, 8:00 a 12:00 AM - 16:00 a 21:00 PM
               </Typography>
             </Paper>
           </Grid>
-        </Grid>    
+          <Grid item xs={12}>
+            <CollapsibleTable children={fecha} />
+          </Grid>
+        </Grid>
       </Container>
     </div>
   );

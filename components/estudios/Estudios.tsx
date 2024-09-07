@@ -20,34 +20,31 @@ import {
   TablePagination,
   Drawer,
   Divider,
-
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import PersonIcon from '@mui/icons-material/Person';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { useGetEstudiosQuery } from '../../graphql/types';
+import CloseIcon from '@mui/icons-material/Close';
+import EstudiosDrawer from './EstudioDrawe';
 
-const Medicamentos: React.FC = () => {
+const Estudios: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [showForm, setShowForm] = React.useState(false);
-  const [selectedMedicamento, setSelectedMedicamento] = React.useState<any>(null);
+  const [selectedEstudio, setSelectedEstudio] = React.useState<any>(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const { data, loading, error, refetch } = useGetEstudiosQuery({
     variables: {
       take: rowsPerPage,
       skip: page * rowsPerPage,
-      where: { codigo_referencia: searchTerm, 
-        // tipo_estudio: searchTerm 
-      
-      }
+      where: { tipo_estudio: searchTerm, codigo_referencia: searchTerm }
     },
   });
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
     setPage(0); // Reset page when search term changes
@@ -67,24 +64,24 @@ const Medicamentos: React.FC = () => {
     setPage(0);
   };
 
-  const handleViewDetails = (medicamento: any) => {
-    setSelectedMedicamento(medicamento);
+  const handleViewDetails = (estudio: any) => {
+    setSelectedEstudio(estudio);
     setDrawerOpen(true);
   };
 
   const handleCloseDrawer = () => {
     setDrawerOpen(false);
-    setSelectedMedicamento(null);
+    setSelectedEstudio(null);
   };
 
   return (
     <Box sx={{ padding: 3, backgroundColor: '#f5f5f5', borderRadius: 2, boxShadow: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ marginBottom: 2 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-          Gestión de Medicamentos
+          Gestión de Estudios
         </Typography>
         <Badge badgeContent={data?.getEstudios.aggregate.count || 0} color="primary">
-          <PersonIcon sx={{ color: '#1976d2' }} />
+          <LocalHospitalIcon sx={{ color: '#1976d2' }} />
         </Badge>
       </Stack>
 
@@ -102,10 +99,10 @@ const Medicamentos: React.FC = () => {
             paddingX: 2,
           }}
         >
-          {showForm ? "Ocultar Formulario" : "Registrar Medicamento"}
+          {showForm ? "Ocultar Formulario" : "Registrar Estudio"}
         </Button>
         <TextField
-          label="Buscar por Nombre"
+          label="Buscar por Tipo o Código"
           variant="outlined"
           value={searchTerm}
           onChange={handleSearchChange}
@@ -130,7 +127,7 @@ const Medicamentos: React.FC = () => {
 
       {showForm && (
         <Box sx={{ marginBottom: 2, padding: 2, backgroundColor: '#e3f2fd', borderRadius: 2 }}>
-          {/* Aquí iría el componente de formulario para medicamentos */}
+          {/* Aquí iría el componente de formulario para estudios */}
         </Box>
       )}
 
@@ -142,7 +139,7 @@ const Medicamentos: React.FC = () => {
 
       {error && (
         <Alert severity="error" sx={{ marginY: 3 }}>
-          Error al cargar los medicamentos: {error.message}
+          Error al cargar los estudios: {error.message}
         </Alert>
       )}
 
@@ -150,30 +147,32 @@ const Medicamentos: React.FC = () => {
         <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#1976d2' }}>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Nombre</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Marca</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Fecha de Vencimiento</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Dosis</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Fecha de Realización</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Tipo de Estudio</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Resultado</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Código de Referencia</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Urgente</TableCell>
               <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.getMedicamentos?.edges.map((medicamento, index) => (
+            {data?.getEstudios?.edges.map((estudio, index) => (
               <TableRow
-                key={medicamento.node.id_medicamento}
+                key={estudio.node.id_estudio}
                 sx={{
                   backgroundColor: index % 2 === 0 ? '#fafafa' : '#f5f5f5',
                   '&:hover': { backgroundColor: '#e0e0e0' },
                   height: '48px',
                 }}
               >
-                <TableCell>{medicamento.node.nombre_med}</TableCell>
-                <TableCell>{medicamento.node.marca}</TableCell>
-                <TableCell>{new Date(medicamento.node.fecha_vencimiento).toLocaleDateString()}</TableCell>
-                <TableCell>{medicamento.node.dosis_hs}</TableCell>
+                <TableCell>{new Date(estudio.node.fecha_realizacion).toLocaleDateString()}</TableCell>
+                <TableCell>{estudio.node.tipo_estudio}</TableCell>
+                <TableCell>{estudio.node.resultado}</TableCell>
+                <TableCell>{estudio.node.codigo_referencia}</TableCell>
+                <TableCell>{estudio.node.urgente ? 'Sí' : 'No'}</TableCell>
                 <TableCell align="center">
                   <Tooltip title="Visualizar">
-                    <IconButton aria-label="visualizar" color="primary" onClick={() => handleViewDetails(medicamento.node)}>
+                    <IconButton aria-label="visualizar" color="primary" onClick={() => handleViewDetails(estudio.node)}>
                       <VisibilityIcon />
                     </IconButton>
                   </Tooltip>
@@ -196,7 +195,7 @@ const Medicamentos: React.FC = () => {
 
       <TablePagination
         component="div"
-        count={data?.getMedicamentos.aggregate.count || 0}
+        count={data?.getEstudios.aggregate.count || 0}
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
@@ -209,58 +208,13 @@ const Medicamentos: React.FC = () => {
         }}
       />
 
-      <Drawer
-        anchor="right"
-        open={drawerOpen}
-        onClose={handleCloseDrawer}
-        sx={{
-          width: 400,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: 400,
-            boxSizing: 'border-box',
-            padding: 3,
-            backgroundColor: '#fff',
-            borderRadius: 2,
-          },
-        }}
-      >
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ marginBottom: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            Detalles del Medicamento
-          </Typography>
-          <IconButton onClick={handleCloseDrawer} color="inherit">
-            <CloseIcon />
-          </IconButton>
-        </Stack>
-        <Divider sx={{ marginY: 2 }} />
-        {selectedMedicamento && (
-          <Box>
-            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Nombre:</Typography>
-            <Typography variant="body2">{selectedMedicamento.nombre_med}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginTop: 1 }}>Marca:</Typography>
-            <Typography variant="body2">{selectedMedicamento.marca}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginTop: 1 }}>Fecha de Vencimiento:</Typography>
-            <Typography variant="body2">{new Date(selectedMedicamento.fecha_vencimiento).toLocaleDateString()}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginTop: 1 }}>Dosis:</Typography>
-            <Typography variant="body2">{selectedMedicamento.dosis_hs}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginTop: 1 }}>Agente Principal:</Typography>
-            <Typography variant="body2">{selectedMedicamento.agente_principal}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginTop: 1 }}>Efectos Secundarios:</Typography>
-            <Typography variant="body2">{selectedMedicamento.efectos_secundarios}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginTop: 1 }}>Lista Negra:</Typography>
-            <Typography variant="body2">{selectedMedicamento.lista_negra ? 'Sí' : 'No'}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginTop: 1 }}>Categoría:</Typography>
-            <Typography variant="body2">{selectedMedicamento.categoria}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginTop: 1 }}>Contraindicaciones:</Typography>
-            <Typography variant="body2">{selectedMedicamento.contraindicaciones}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', marginTop: 1 }}>Prescripción Requerida:</Typography>
-            <Typography variant="body2">{selectedMedicamento.prescripcion_requerida ? 'Sí' : 'No'}</Typography>
-          </Box>
-        )}
-      </Drawer>
+<EstudiosDrawer
+        drawerOpen={drawerOpen}
+        handleCloseDrawer={handleCloseDrawer}
+        selectedEstudio={selectedEstudio}
+      />
     </Box>
   );
 };
 
-export default Medicamentos;
+export default Estudios;
