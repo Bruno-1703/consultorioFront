@@ -4,7 +4,8 @@ const citasQuery = gql`
 query getCitas($limit: Int!, $skip: Int!, $where: CitaWhereInput) {
   getCitas(limit: $limit, skip: $skip,  where: $where) {
     edges {
-      node {        
+      node {     
+      id_cita   
         observaciones
         cancelada    
         fechaSolicitud

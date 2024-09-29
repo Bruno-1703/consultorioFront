@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 const estudiosQuery = gql`
-  query getEstudios($take: Int!, $skip: Int!, $where: EstudioWhereInput) {
-    getEstudios(limit: $take, skip: $skip, where: $where) {
+  query getEstudios($limit: Int!, $skip: Int!, $where: EstudioWhereInput) {
+    getEstudios(limit: $limit, skip: $skip, where: $where) {
       edges {
         node {
           ...Estudio

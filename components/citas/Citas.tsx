@@ -16,7 +16,6 @@ import {
   Button,
   Badge,
 } from "@mui/material";
-
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ListIcon from "@mui/icons-material/List";
 import SearchIcon from "@mui/icons-material/Search";
@@ -24,27 +23,28 @@ import { Cita, useGetCitasQuery } from "../../graphql/types";
 import TableSkeleton from "../../utils/TableSkeleton";
 import { FormularioCita } from "./FormularioCita";
 import { CitaRow } from "./CitaRow";
+import dayjs from "dayjs";
+
 interface CollapsibleTableProps {
-  fecha: string;
+  fecha: dayjs.Dayjs;
 }
-const CollapsibleTable: React.FC = (CollapsibleTableProps) => {
+
+const CollapsibleTable: React.FC<CollapsibleTableProps> = ({ fecha }) => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [showForm, setShowForm] = React.useState(false);
 
   const { data, loading, error, refetch } = useGetCitasQuery({
     variables: {
       limit: rowsPerPage,
       skip: page * rowsPerPage,
       where: {
-        fechaSolicitud: CollapsibleTableProps.children,
-        motivoConsulta: searchTerm 
+        fechaSolicitud: fecha,
+        motivoConsulta: searchTerm || undefined, // Condición de búsqueda
       },
     },
   });
 
-  
   if (loading) return <TableSkeleton rows={3} columns={5} />;
   if (error) return <p>Error: {error.message}</p>;
 
@@ -53,7 +53,7 @@ const CollapsibleTable: React.FC = (CollapsibleTableProps) => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    setPage(0); 
+    setPage(0);
   };
 
   const handleChangePage = (
@@ -67,11 +67,11 @@ const CollapsibleTable: React.FC = (CollapsibleTableProps) => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page when rows per page changes
+    setPage(0);
   };
 
   const handleRefresh = () => {
-    refetch(); // Refresh the data
+    refetch();
   };
 
   return (
@@ -84,15 +84,8 @@ const CollapsibleTable: React.FC = (CollapsibleTableProps) => {
         padding: 2,
       }}
     >
+      {/* Barra de búsqueda y contador */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <Button
-          variant="contained"
-          onClick={() => setShowForm(!showForm)}
-          sx={{ mr: 2 }}
-        >
-          {showForm ? "Cancelar" : "Agregar Cita"}
-        </Button>
-        {showForm && <FormularioCita />}
         <TextField
           label="Buscar por Motivo de Consulta"
           variant="outlined"
@@ -103,11 +96,7 @@ const CollapsibleTable: React.FC = (CollapsibleTableProps) => {
             endAdornment: <SearchIcon />,
           }}
         />
-        <IconButton
-          aria-label="refresh"
-          onClick={handleRefresh}
-          sx={{ mr: 2 }}
-        >
+        <IconButton onClick={handleRefresh} sx={{ marginRight: 2 }}>
           <RefreshIcon />
         </IconButton>
         <Box sx={{ display: "flex", alignItems: "baseline" }}>
@@ -117,6 +106,7 @@ const CollapsibleTable: React.FC = (CollapsibleTableProps) => {
         </Box>
       </Box>
 
+      {/* Tabla de citas */}
       <TableContainer
         component={Paper}
         sx={{ width: "100%", flexGrow: 1, overflow: "auto" }}
@@ -149,6 +139,7 @@ const CollapsibleTable: React.FC = (CollapsibleTableProps) => {
         </Table>
       </TableContainer>
 
+      {/* Paginación */}
       <TablePagination
         component="div"
         count={totalCount}

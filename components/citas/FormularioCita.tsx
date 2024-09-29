@@ -30,7 +30,7 @@ export const FormularioCita = () => {
     error: pacientesError,
   } = useGetPacientesQuery({
     variables: {
-      take: 10,
+      limit: 10,
       skip: 0,
       where: {},
     },

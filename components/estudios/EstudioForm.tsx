@@ -1,73 +1,64 @@
-import React from 'react';
-import { TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import Box from "@mui/material/Box/Box";
+import Button from "@mui/material/Button/Button";
+import Checkbox from "@mui/material/Checkbox/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel/FormControlLabel";
+import TextField from "@mui/material/TextField/TextField";
+import React from "react";
 
-function EstudioForm() {
-  const [fechaRealizacion, setFechaRealizacion] = React.useState(new Date());
+export const EstudioForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const [tipoEstudio, setTipoEstudio] = React.useState('');
+  const [resultado, setResultado] = React.useState('');
+  const [codigoReferencia, setCodigoReferencia] = React.useState('');
+  const [urgente, setUrgente] = React.useState(false);
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    // Aquí iría la lógica para enviar los datos del formulario
+    console.log({ tipoEstudio, resultado, codigoReferencia, urgente });
+    onClose(); // Cerrar el formulario después de enviar
+  };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {/* <DatePicker
-        label="Fecha de Realización"
-        value={fechaRealizacion}
-        onChange={(newValue) => setFechaRealizacion(newValue)}
-        renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
-      /> */}
-
+    <Box component="form" onSubmit={handleSubmit} sx={{ padding: 2 }}>
       <TextField
         label="Tipo de Estudio"
-        name="tipoEstudio"
+        variant="outlined"
         fullWidth
-        margin="normal"
+        value={tipoEstudio}
+        onChange={(e) => setTipoEstudio(e.target.value)}
+        sx={{ marginBottom: 2 }}
       />
-
       <TextField
         label="Resultado"
-        name="resultado"
-        multiline
-        rows={4}
+        variant="outlined"
         fullWidth
-        margin="normal"
+        value={resultado}
+        onChange={(e) => setResultado(e.target.value)}
+        sx={{ marginBottom: 2 }}
       />
-
       <TextField
         label="Código de Referencia"
-        name="codigoReferencia"
+        variant="outlined"
         fullWidth
-        margin="normal"
+        value={codigoReferencia}
+        onChange={(e) => setCodigoReferencia(e.target.value)}
+        sx={{ marginBottom: 2 }}
       />
-
-      <TextField
-        label="Observaciones"
-        name="observaciones"
-        multiline
-        rows={4}
-        fullWidth
-        margin="normal"
-      />
-
-      <TextField
-        label="Médico Solicitante"
-        name="medicoSolicitante"
-        fullWidth
-        margin="normal"
-      />
-
       <FormControlLabel
-        control={<Checkbox name="urgente" />}
+        control={
+          <Checkbox
+            checked={urgente}
+            onChange={(e) => setUrgente(e.target.checked)}
+          />
+        }
         label="Urgente"
       />
-
-      <Button type="submit" variant="contained" color="primary">
-        Guardar
+      <Button type="submit" variant="contained" color="primary" sx={{ marginRight: 1 }}>
+        Registrar
       </Button>
-    </form>
+      <Button variant="outlined" onClick={onClose}>
+        Cancelar
+      </Button>
+    </Box>
   );
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    // lógica para manejar el envío del formulario
-  }
-}
-
-export default EstudioForm;
+};

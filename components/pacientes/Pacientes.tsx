@@ -28,7 +28,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PacienteForm from './PacienteForm';
 import { useGetPacientesQuery } from '../../graphql/types';
-import PacientesDrawer from './pacienteDrawer';
+import TableSkeleton from '../../utils/TableSkeleton';
+import PacientesModal from './pacienteModal';
 
 const Pacientes: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -40,8 +41,10 @@ const Pacientes: React.FC = () => {
 
   const { data, loading, error, refetch } = useGetPacientesQuery({
     variables: {
-      take: rowsPerPage,
-      skip: page * rowsPerPage,
+      // take: rowsPerPage,
+      // skip: page * rowsPerPage,
+      skip:0,
+      limit:10,
       where: { dni: searchTerm, apellido_paciente: searchTerm, nombre_paciente: searchTerm }
     },
   });
@@ -74,6 +77,10 @@ const Pacientes: React.FC = () => {
     setDrawerOpen(false);
     setSelectedPaciente(null);
   };
+    
+  if (loading) return <TableSkeleton rows={3} columns={5} />;
+  if (error) return <p>Error: {error.message}</p>;
+
 
   return (
     <Box sx={{ padding: 3, backgroundColor: '#f5f5f5', borderRadius: 2, boxShadow: 3 }}>
@@ -146,7 +153,7 @@ const Pacientes: React.FC = () => {
       )}
 
       <TableContainer component={Paper} sx={{ boxShadow: 2 }}>
-        <Table sx={{ minWidth: 650 }}>
+        <Table sx={{ minWidth: 1110 }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#1976d2' }}>
               <TableCell sx={{ color: 'white', fontWeight: 'bold', padding: '6px 16px' }}>DNI</TableCell>
@@ -211,11 +218,11 @@ const Pacientes: React.FC = () => {
       />
 
       {/* Aquí se agrega el Drawer */}
-      <PacientesDrawer
-        drawerOpen={drawerOpen}
-        handleCloseDrawer={handleCloseDrawer}
-        selectedPaciente={selectedPaciente}
-      />
+      <PacientesModal
+  modalOpen={drawerOpen}
+  handleCloseModal={handleCloseDrawer}
+  selectedPaciente={selectedPaciente}
+/>
     </Box>
   );
 };

@@ -18,8 +18,6 @@ import {
   TableRow,
   Paper,
   TablePagination,
-  Drawer,
-  Divider,
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -27,8 +25,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { useGetEstudiosQuery } from '../../graphql/types';
-import CloseIcon from '@mui/icons-material/Close';
 import EstudiosDrawer from './EstudioDrawe';
+import { EstudioForm } from './EstudioForm';
 
 const Estudios: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -40,26 +38,22 @@ const Estudios: React.FC = () => {
 
   const { data, loading, error, refetch } = useGetEstudiosQuery({
     variables: {
-      take: rowsPerPage,
+      limit: rowsPerPage,
       skip: page * rowsPerPage,
       where: { tipo_estudio: searchTerm, codigo_referencia: searchTerm }
     },
   });
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
     setPage(0); // Reset page when search term changes
   };
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -101,6 +95,7 @@ const Estudios: React.FC = () => {
         >
           {showForm ? "Ocultar Formulario" : "Registrar Estudio"}
         </Button>
+
         <TextField
           label="Buscar por Tipo o Código"
           variant="outlined"
@@ -127,7 +122,7 @@ const Estudios: React.FC = () => {
 
       {showForm && (
         <Box sx={{ marginBottom: 2, padding: 2, backgroundColor: '#e3f2fd', borderRadius: 2 }}>
-          {/* Aquí iría el componente de formulario para estudios */}
+          <EstudioForm onClose={() => setShowForm(false)} />
         </Box>
       )}
 
@@ -158,7 +153,7 @@ const Estudios: React.FC = () => {
           <TableBody>
             {data?.getEstudios?.edges.map((estudio, index) => (
               <TableRow
-                key={estudio.node.id_estudio}
+                key={estudio.node?.id_estudio}
                 sx={{
                   backgroundColor: index % 2 === 0 ? '#fafafa' : '#f5f5f5',
                   '&:hover': { backgroundColor: '#e0e0e0' },
@@ -208,7 +203,7 @@ const Estudios: React.FC = () => {
         }}
       />
 
-<EstudiosDrawer
+      <EstudiosDrawer
         drawerOpen={drawerOpen}
         handleCloseDrawer={handleCloseDrawer}
         selectedEstudio={selectedEstudio}
