@@ -13,6 +13,7 @@ export default gql`
     sexo
     grupo_sanguineo
     alergias 
+    eliminadoLog
    
   }
 `;

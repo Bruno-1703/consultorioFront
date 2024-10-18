@@ -14,14 +14,15 @@ import {
 import { PacienteInput, useCreatePacienteMutation } from "../../graphql/types";
 import dayjs, { Dayjs } from "dayjs";
 
-export default function PacienteForm() {
+const PacienteForm = () => {
+  const [isFormVisible, setIsFormVisible] = useState(false);
   const [dni, setDni] = useState("");
   const [nombre_paciente, setNombrePaciente] = useState("");
   const [apellido_paciente, setApellidoPaciente] = useState("");
   const [edad, setEdad] = useState("");
   const [altura, setAltura] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [fechaNacimiento, setFechaNacimiento] = useState<Dayjs | null>(null); // Dayjs para fechas
+  const [fechaNacimiento, setFechaNacimiento] = useState<Dayjs | null>(null);
   const [sexo, setSexo] = useState("");
   const [grupo_sanguineo, setGrupoSanguineo] = useState("");
   const [alergias, setAlergias] = useState("");
@@ -35,7 +36,6 @@ export default function PacienteForm() {
 
   const [createPacienteMutation] = useCreatePacienteMutation();
 
-  // Manejo del cambio de fecha
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputDate = dayjs(event.target.value);
     const isValidDate = inputDate.isValid();
@@ -47,7 +47,6 @@ export default function PacienteForm() {
     }
   };
 
-  // Manejo del envío del formulario
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -61,7 +60,7 @@ export default function PacienteForm() {
     setErrors(newErrors);
 
     if (Object.values(newErrors).some((error) => error)) {
-      return; // No enviar el formulario si hay errores
+      return;
     }
 
     const pacienteInput: PacienteInput = {
@@ -90,7 +89,6 @@ export default function PacienteForm() {
     }
   };
 
-  // Resetear formulario
   const resetForm = () => {
     setDni("");
     setNombrePaciente("");
@@ -102,163 +100,163 @@ export default function PacienteForm() {
     setSexo("");
     setGrupoSanguineo("");
     setAlergias("");
+    setIsFormVisible(false);
   };
 
   return (
-    <Box sx={{ padding: 2, maxWidth: 500, margin: "auto", transition: "all 0.3s ease", position: "relative", left: 0 }}>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{
-          backgroundColor: "#f9f9f9",
-          padding: 2,
-          borderRadius: 2,
-          boxShadow: 2,
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          transition: "all 0.5s ease",
-        }}
+    <Box sx={{ padding: 2, maxWidth: 500, margin: "auto" }}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setIsFormVisible(!isFormVisible)}
       >
-        <Typography variant="h6" gutterBottom sx={{ fontSize: "1.25rem" }}>
-          Registrar Paciente
-        </Typography>
+        {isFormVisible ? "Cerrar Formulario" : "Agregar Paciente"}
+      </Button>
 
-        <TextField
-          label="DNI"
-          value={dni}
-          onChange={(e) => setDni(e.target.value)}
-          fullWidth
-          size="small"
-          required
-          error={errors.dni}
-          helperText={errors.dni ? "El DNI es obligatorio" : ""}
-          sx={{ backgroundColor: "white", borderRadius: 1 }}
-        />
-        <TextField
-          label="Nombre"
-          value={nombre_paciente}
-          onChange={(e) => setNombrePaciente(e.target.value)}
-          fullWidth
-          size="small"
-          required
-          error={errors.nombre_paciente}
-          helperText={errors.nombre_paciente ? "El nombre es obligatorio" : ""}
-          sx={{ backgroundColor: "white", borderRadius: 1 }}
-        />
-        <TextField
-          label="Apellido"
-          value={apellido_paciente}
-          onChange={(e) => setApellidoPaciente(e.target.value)}
-          fullWidth
-          size="small"
-          required
-          error={errors.apellido_paciente}
-          helperText={errors.apellido_paciente ? "El apellido es obligatorio" : ""}
-          sx={{ backgroundColor: "white", borderRadius: 1 }}
-        />
-
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <TextField
-            label="Edad"
-            value={edad}
-            onChange={(e) => setEdad(e.target.value)}
-            fullWidth
-            size="small"
-            sx={{ backgroundColor: "white", borderRadius: 1 }}
-          />
-          <TextField
-            label="Altura"
-            value={altura}
-            onChange={(e) => setAltura(e.target.value)}
-            fullWidth
-            size="small"
-            sx={{ backgroundColor: "white", borderRadius: 1 }}
-          />
-        </Box>
-
-        <TextField
-          label="Teléfono"
-          value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
-          fullWidth
-          size="small"
-          sx={{ backgroundColor: "white", borderRadius: 1 }}
-        />
-
-        {/* DatePicker */}
-        <TextField
-          label="Fecha de Nacimiento"
-          type="date"
-          value={fechaNacimiento ? fechaNacimiento.format("YYYY-MM-DD") : ""}
-          onChange={handleDateChange}
-          fullWidth
-          required
-          error={errors.fechaNacimiento}
-          helperText={errors.fechaNacimiento ? "Formato de fecha inválido (YYYY-MM-DD)" : ""}
-          InputLabelProps={{
-            shrink: true,
+      {isFormVisible && (
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            backgroundColor: "#f9f9f9",
+            padding: 2,
+            borderRadius: 2,
+            boxShadow: 2,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            marginTop: 2,
           }}
-        />
-
-        <FormControl fullWidth size="small" sx={{ backgroundColor: "white", borderRadius: 1 }}>
-          <InputLabel>Sexo</InputLabel>
-          <Select
-            value={sexo}
-            onChange={(e) => setSexo(e.target.value)}
-            label="Sexo"
-          >
-            <MenuItem value={"M"}>Masculino</MenuItem>
-            <MenuItem value={"F"}>Femenino</MenuItem>
-            <MenuItem value={"O"}>Otro</MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControl fullWidth size="small" sx={{ backgroundColor: "white", borderRadius: 1 }}>
-          <InputLabel>Grupo Sanguíneo</InputLabel>
-          <Select
-            value={grupo_sanguineo}
-            onChange={(e) => setGrupoSanguineo(e.target.value)}
-            label="Grupo Sanguíneo"
-          >
-            <MenuItem value={"A+"}>A+</MenuItem>
-            <MenuItem value={"A-"}>A-</MenuItem>
-            <MenuItem value={"B+"}>B+</MenuItem>
-            <MenuItem value={"B-"}>B-</MenuItem>
-            <MenuItem value={"O+"}>O+</MenuItem>
-            <MenuItem value={"O-"}>O-</MenuItem>
-            <MenuItem value={"AB+"}>AB+</MenuItem>
-            <MenuItem value={"AB-"}>AB-</MenuItem>
-          </Select>
-        </FormControl>
-
-        <TextField
-          label="Alergias"
-          value={alergias}
-          onChange={(e) => setAlergias(e.target.value)}
-          fullWidth
-          size="small"
-          sx={{ backgroundColor: "white", borderRadius: 1 }}
-        />
-
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          Crear Paciente
-        </Button>
-      </Box>
-
-      <Snackbar
-        open={!!successMessage}
-        autoHideDuration={6000}
-        onClose={() => setSuccessMessage(null)}
-      >
-        <Alert
-          onClose={() => setSuccessMessage(null)}
-          severity="success"
-          sx={{ width: "100%" }}
         >
-          {successMessage}
-        </Alert>
-      </Snackbar>
+          <Typography variant="h6" gutterBottom>
+            Registrar Paciente
+          </Typography>
+
+          <TextField
+            label="DNI"
+            value={dni}
+            onChange={(e) => setDni(e.target.value)}
+            fullWidth
+            size="small"
+            required
+            error={errors.dni}
+            helperText={errors.dni ? "El DNI es obligatorio" : ""}
+          />
+          <TextField
+            label="Nombre"
+            value={nombre_paciente}
+            onChange={(e) => setNombrePaciente(e.target.value)}
+            fullWidth
+            size="small"
+            required
+            error={errors.nombre_paciente}
+            helperText={errors.nombre_paciente ? "El nombre es obligatorio" : ""}
+          />
+          <TextField
+            label="Apellido"
+            value={apellido_paciente}
+            onChange={(e) => setApellidoPaciente(e.target.value)}
+            fullWidth
+            size="small"
+            required
+            error={errors.apellido_paciente}
+            helperText={errors.apellido_paciente ? "El apellido es obligatorio" : ""}
+          />
+
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              label="Edad"
+              value={edad}
+              onChange={(e) => setEdad(e.target.value)}
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Altura"
+              value={altura}
+              onChange={(e) => setAltura(e.target.value)}
+              fullWidth
+              size="small"
+            />
+          </Box>
+
+          <TextField
+            label="Teléfono"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+            fullWidth
+            size="small"
+          />
+
+          <TextField
+            label="Fecha de Nacimiento"
+            type="date"
+            value={fechaNacimiento ? fechaNacimiento.format("YYYY-MM-DD") : ""}
+            onChange={handleDateChange}
+            fullWidth
+            required
+            error={errors.fechaNacimiento}
+            helperText={errors.fechaNacimiento ? "Formato de fecha inválido (YYYY-MM-DD)" : ""}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+
+          <FormControl fullWidth size="small">
+            <InputLabel>Sexo</InputLabel>
+            <Select
+              value={sexo}
+              onChange={(e) => setSexo(e.target.value)}
+              label="Sexo"
+            >
+              <MenuItem value={"M"}>Masculino</MenuItem>
+              <MenuItem value={"F"}>Femenino</MenuItem>
+              <MenuItem value={"O"}>Otro</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth size="small">
+            <InputLabel>Grupo Sanguíneo</InputLabel>
+            <Select
+              value={grupo_sanguineo}
+              onChange={(e) => setGrupoSanguineo(e.target.value)}
+              label="Grupo Sanguíneo"
+            >
+              <MenuItem value={"A+"}>A+</MenuItem>
+              <MenuItem value={"A-"}>A-</MenuItem>
+              <MenuItem value={"B+"}>B+</MenuItem>
+              <MenuItem value={"B-"}>B-</MenuItem>
+              <MenuItem value={"O+"}>O+</MenuItem>
+              <MenuItem value={"O-"}>O-</MenuItem>
+              <MenuItem value={"AB+"}>AB+</MenuItem>
+              <MenuItem value={"AB-"}>AB-</MenuItem>
+            </Select>
+          </FormControl>
+
+          <TextField
+            label="Alergias"
+            value={alergias}
+            onChange={(e) => setAlergias(e.target.value)}
+            fullWidth
+            size="small"
+            sx={{ backgroundColor: "white", borderRadius: 1 }}
+          />
+
+          <Button type="submit" variant="contained" color="primary">
+            Registrar
+          </Button>
+        </Box>
+      )}
+
+      {successMessage && (
+        <Snackbar open={!!successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage(null)}>
+          <Alert onClose={() => setSuccessMessage(null)} severity="success">
+            {successMessage}
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
-}
+};
+
+export default PacienteForm;

@@ -40,7 +40,7 @@ const CollapsibleTable: React.FC<CollapsibleTableProps> = ({ fecha }) => {
       skip: page * rowsPerPage,
       where: {
         fechaSolicitud: fecha,
-        motivoConsulta: searchTerm || undefined, // Condición de búsqueda
+        motivoConsulta: searchTerm || undefined,
       },
     },
   });
@@ -56,16 +56,11 @@ const CollapsibleTable: React.FC<CollapsibleTableProps> = ({ fecha }) => {
     setPage(0);
   };
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -85,21 +80,40 @@ const CollapsibleTable: React.FC<CollapsibleTableProps> = ({ fecha }) => {
       }}
     >
       {/* Barra de búsqueda y contador */}
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <TextField
-          label="Buscar por Motivo de Consulta"
-          variant="outlined"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          sx={{ marginRight: 2 }}
-          InputProps={{
-            endAdornment: <SearchIcon />,
-          }}
-        />
-        <IconButton onClick={handleRefresh} sx={{ marginRight: 2 }}>
-          <RefreshIcon />
-        </IconButton>
-        <Box sx={{ display: "flex", alignItems: "baseline" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        {/* Búsqueda */}
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <TextField
+            label="Buscar por Motivo de Consulta"
+            variant="outlined"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            sx={{ marginRight: 2, width: '300px' }}
+            InputProps={{
+              endAdornment: (
+                <IconButton>
+                  <SearchIcon />
+                </IconButton>
+              ),
+            }}
+          />
+          <IconButton onClick={handleRefresh} sx={{ marginLeft: 1 }}>
+            <RefreshIcon />
+          </IconButton>
+        </Box>
+
+        {/* Contador */}
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Typography variant="body1" sx={{ marginRight: 1 }}>
+            Total de Citas:
+          </Typography>
           <Badge badgeContent={totalCount} color="primary">
             <ListIcon />
           </Badge>
@@ -125,6 +139,7 @@ const CollapsibleTable: React.FC<CollapsibleTableProps> = ({ fecha }) => {
               <CitaRow
                 key={index}
                 row={{
+                  id_cita: items.node.id_cita,
                   motivoConsulta: items.node.motivoConsulta || "N/A",
                   fechaSolicitud: items.node.fechaSolicitud || "N/A",
                   observaciones: items.node.observaciones || "N/A",

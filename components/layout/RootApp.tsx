@@ -2,6 +2,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { memo, useEffect, useState } from "react";
 import { Layout } from "./Layout";
 import { ApolloClient, InMemoryCache, HttpLink, ApolloProvider } from "@apollo/client";
+import React from "react";
 
 const RootApp = (prop) => {
   const [apolloClient, setApolloClient] = useState(null);

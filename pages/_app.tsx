@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 // ******************************************* //
 import Head from "next/head";
 import RootApp from "../components/layout/RootApp";
+import React from "react";
 
 function App({ Component, pageProps: { ...pageProps } }: AppProps) {
   return (
