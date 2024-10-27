@@ -42,7 +42,7 @@ const Medicamentos: React.FC = () => {
       limit: rowsPerPage,
       skip: page * rowsPerPage,
       where: {
-        nombre_med: searchTerm,
+        // nombre_med: searchTerm,
         // Otros filtros opcionales para buscar medicamentos
       },
     },
@@ -211,7 +211,7 @@ const Medicamentos: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.getMedicamentos?.edges.map((medicamento, index) => (
+            {data.getMedicamentos.edges.node.((medicamento, index) => (
               <TableRow
                 key={medicamento.node.id_medicamento}
                 sx={{

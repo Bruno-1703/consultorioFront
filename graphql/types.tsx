@@ -140,6 +140,7 @@ export type EstudioResultadoBusqueda = {
 export type EstudioWhereInput = {
   codigo_referencia?: InputMaybe<Scalars['String']['input']>;
   fecha_realizacion?: InputMaybe<Scalars['DateTime']['input']>;
+  id_estudio?: InputMaybe<Scalars['String']['input']>;
   resultado?: InputMaybe<Scalars['String']['input']>;
   tipo_estudio?: InputMaybe<Scalars['String']['input']>;
 };
@@ -163,7 +164,7 @@ export type Medicamento = {
 export type MedicamentoEdge = {
   __typename?: 'MedicamentoEdge';
   cursor: Scalars['String']['output'];
-  node: Medicamento;
+  node?: Maybe<Medicamento>;
 };
 
 export type MedicamentoInput = {
@@ -525,6 +526,7 @@ export const CitaFragmentDoc = gql`
     `;
 export const EstudioFragmentDoc = gql`
     fragment Estudio on Estudio {
+  id_estudio
   fecha_realizacion
   tipo_estudio
   resultado
@@ -1299,7 +1301,7 @@ export type CreateEstudioMutationVariables = Exact<{
 
 export type CreateEstudioMutation = { __typename?: 'Mutation', createEstudio: string };
 
-export type EstudioFragment = { __typename?: 'Estudio', fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null };
+export type EstudioFragment = { __typename?: 'Estudio', id_estudio: string, fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null };
 
 export type GetEstudiosQueryVariables = Exact<{
   limit: Scalars['Int']['input'];
@@ -1308,7 +1310,7 @@ export type GetEstudiosQueryVariables = Exact<{
 }>;
 
 
-export type GetEstudiosQuery = { __typename?: 'Query', getEstudios: { __typename?: 'EstudioResultadoBusqueda', edges: Array<{ __typename?: 'EstudioEdge', node: { __typename?: 'Estudio', fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
+export type GetEstudiosQuery = { __typename?: 'Query', getEstudios: { __typename?: 'EstudioResultadoBusqueda', edges: Array<{ __typename?: 'EstudioEdge', node: { __typename?: 'Estudio', id_estudio: string, fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
 
 export type UpdateEstudioMutationVariables = Exact<{
   data: EstudioInput;
@@ -1341,7 +1343,7 @@ export type GetMedicamentosQueryVariables = Exact<{
 }>;
 
 
-export type GetMedicamentosQuery = { __typename?: 'Query', getMedicamentos: { __typename?: 'MedicamentoResultadoBusqueda', edges: { __typename?: 'MedicamentoEdge', node: { __typename?: 'Medicamento', nombre_med?: string | null, marca?: string | null, fecha_vencimiento?: any | null, dosis_hs?: string | null, agente_principal?: string | null, efectos_secundarios?: string | null, lista_negra?: boolean | null, categoria?: string | null, contraindicaciones?: string | null, prescripcion_requerida?: boolean | null } }, aggregate: { __typename?: 'AggregateCount', count: number } } };
+export type GetMedicamentosQuery = { __typename?: 'Query', getMedicamentos: { __typename?: 'MedicamentoResultadoBusqueda', edges: { __typename?: 'MedicamentoEdge', node?: { __typename?: 'Medicamento', nombre_med?: string | null, marca?: string | null, fecha_vencimiento?: any | null, dosis_hs?: string | null, agente_principal?: string | null, efectos_secundarios?: string | null, lista_negra?: boolean | null, categoria?: string | null, contraindicaciones?: string | null, prescripcion_requerida?: boolean | null } | null }, aggregate: { __typename?: 'AggregateCount', count: number } } };
 
 export type CreatePacienteMutationVariables = Exact<{
   data: PacienteInput;
