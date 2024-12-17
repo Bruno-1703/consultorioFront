@@ -96,9 +96,9 @@ export type EnfermedadResultadoBusqueda = {
 };
 
 export type EnfermedadWhereInput = {
-  gravedad: Scalars['String']['input'];
+  gravedad?: InputMaybe<Scalars['String']['input']>;
   id_enfermedad?: InputMaybe<Scalars['String']['input']>;
-  nombre_enf: Scalars['String']['input'];
+  nombre_enf?: InputMaybe<Scalars['String']['input']>;
   sintomas?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -106,7 +106,7 @@ export type Estudio = {
   __typename?: 'Estudio';
   codigo_referencia?: Maybe<Scalars['String']['output']>;
   fecha_realizacion?: Maybe<Scalars['DateTime']['output']>;
-  id_estudio: Scalars['String']['output'];
+  id_estudio?: Maybe<Scalars['ID']['output']>;
   medico_solicitante: Scalars['String']['output'];
   observaciones?: Maybe<Scalars['String']['output']>;
   resultado?: Maybe<Scalars['String']['output']>;
@@ -123,7 +123,7 @@ export type EstudioEdge = {
 export type EstudioInput = {
   codigo_referencia?: InputMaybe<Scalars['String']['input']>;
   fecha_realizacion?: InputMaybe<Scalars['DateTime']['input']>;
-  id_estudio?: InputMaybe<Scalars['String']['input']>;
+  id_estudio?: InputMaybe<Scalars['ID']['input']>;
   medico_solicitante?: InputMaybe<Scalars['String']['input']>;
   observaciones?: InputMaybe<Scalars['String']['input']>;
   resultado?: InputMaybe<Scalars['String']['input']>;
@@ -140,7 +140,7 @@ export type EstudioResultadoBusqueda = {
 export type EstudioWhereInput = {
   codigo_referencia?: InputMaybe<Scalars['String']['input']>;
   fecha_realizacion?: InputMaybe<Scalars['DateTime']['input']>;
-  id_estudio?: InputMaybe<Scalars['String']['input']>;
+  id_estudio?: InputMaybe<Scalars['ID']['input']>;
   resultado?: InputMaybe<Scalars['String']['input']>;
   tipo_estudio?: InputMaybe<Scalars['String']['input']>;
 };
@@ -524,6 +524,14 @@ export const CitaFragmentDoc = gql`
   }
 }
     `;
+export const EnfermedadFragmentDoc = gql`
+    fragment Enfermedad on Enfermedad {
+  id_enfermedad
+  nombre_enf
+  sintomas
+  gravedad
+}
+    `;
 export const EstudioFragmentDoc = gql`
     fragment Estudio on Estudio {
   id_estudio
@@ -799,6 +807,55 @@ export function useCreateEnfermedadMutation(baseOptions?: Apollo.MutationHookOpt
 export type CreateEnfermedadMutationHookResult = ReturnType<typeof useCreateEnfermedadMutation>;
 export type CreateEnfermedadMutationResult = Apollo.MutationResult<CreateEnfermedadMutation>;
 export type CreateEnfermedadMutationOptions = Apollo.BaseMutationOptions<CreateEnfermedadMutation, CreateEnfermedadMutationVariables>;
+export const GetEnfermedadesDocument = gql`
+    query getEnfermedades($limit: Int!, $skip: Int!, $where: EnfermedadWhereInput) {
+  getEnfermedades(limit: $limit, skip: $skip, where: $where) {
+    edges {
+      node {
+        ...Enfermedad
+      }
+    }
+    aggregate {
+      count
+    }
+  }
+}
+    ${EnfermedadFragmentDoc}`;
+
+/**
+ * __useGetEnfermedadesQuery__
+ *
+ * To run a query within a React component, call `useGetEnfermedadesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEnfermedadesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEnfermedadesQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      skip: // value for 'skip'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetEnfermedadesQuery(baseOptions: Apollo.QueryHookOptions<GetEnfermedadesQuery, GetEnfermedadesQueryVariables> & ({ variables: GetEnfermedadesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetEnfermedadesQuery, GetEnfermedadesQueryVariables>(GetEnfermedadesDocument, options);
+      }
+export function useGetEnfermedadesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEnfermedadesQuery, GetEnfermedadesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetEnfermedadesQuery, GetEnfermedadesQueryVariables>(GetEnfermedadesDocument, options);
+        }
+export function useGetEnfermedadesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetEnfermedadesQuery, GetEnfermedadesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetEnfermedadesQuery, GetEnfermedadesQueryVariables>(GetEnfermedadesDocument, options);
+        }
+export type GetEnfermedadesQueryHookResult = ReturnType<typeof useGetEnfermedadesQuery>;
+export type GetEnfermedadesLazyQueryHookResult = ReturnType<typeof useGetEnfermedadesLazyQuery>;
+export type GetEnfermedadesSuspenseQueryHookResult = ReturnType<typeof useGetEnfermedadesSuspenseQuery>;
+export type GetEnfermedadesQueryResult = Apollo.QueryResult<GetEnfermedadesQuery, GetEnfermedadesQueryVariables>;
 export const CreateEstudioDocument = gql`
     mutation CreateEstudio($data: EstudioInput!) {
   createEstudio(data: $data)
@@ -1294,6 +1351,17 @@ export type CreateEnfermedadMutationVariables = Exact<{
 
 export type CreateEnfermedadMutation = { __typename?: 'Mutation', createEnfermedad: string };
 
+export type EnfermedadFragment = { __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string, sintomas?: string | null, gravedad?: string | null };
+
+export type GetEnfermedadesQueryVariables = Exact<{
+  limit: Scalars['Int']['input'];
+  skip: Scalars['Int']['input'];
+  where?: InputMaybe<EnfermedadWhereInput>;
+}>;
+
+
+export type GetEnfermedadesQuery = { __typename?: 'Query', getEnfermedades: { __typename?: 'EnfermedadResultadoBusqueda', edges: Array<{ __typename?: 'EnfermedadEdge', node: { __typename?: 'Enfermedad', id_enfermedad?: string | null, nombre_enf: string, sintomas?: string | null, gravedad?: string | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
+
 export type CreateEstudioMutationVariables = Exact<{
   data: EstudioInput;
 }>;
@@ -1301,7 +1369,7 @@ export type CreateEstudioMutationVariables = Exact<{
 
 export type CreateEstudioMutation = { __typename?: 'Mutation', createEstudio: string };
 
-export type EstudioFragment = { __typename?: 'Estudio', id_estudio: string, fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null };
+export type EstudioFragment = { __typename?: 'Estudio', id_estudio?: string | null, fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null };
 
 export type GetEstudiosQueryVariables = Exact<{
   limit: Scalars['Int']['input'];
@@ -1310,7 +1378,7 @@ export type GetEstudiosQueryVariables = Exact<{
 }>;
 
 
-export type GetEstudiosQuery = { __typename?: 'Query', getEstudios: { __typename?: 'EstudioResultadoBusqueda', edges: Array<{ __typename?: 'EstudioEdge', node: { __typename?: 'Estudio', id_estudio: string, fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
+export type GetEstudiosQuery = { __typename?: 'Query', getEstudios: { __typename?: 'EstudioResultadoBusqueda', edges: Array<{ __typename?: 'EstudioEdge', node: { __typename?: 'Estudio', id_estudio?: string | null, fecha_realizacion?: any | null, tipo_estudio?: string | null, resultado?: string | null, codigo_referencia?: string | null, observaciones?: string | null, medico_solicitante: string, urgente?: boolean | null } }>, aggregate: { __typename?: 'AggregateCount', count: number } } };
 
 export type UpdateEstudioMutationVariables = Exact<{
   data: EstudioInput;

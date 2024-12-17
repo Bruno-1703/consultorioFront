@@ -5,6 +5,7 @@ import {
   AttachMoney as AttachMoneyIcon,
   
 } from '@mui/icons-material';
+import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined';
 import MedicationIcon from '@mui/icons-material/Medication';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
@@ -39,9 +40,9 @@ export const MENU_LIST: IMenuItem[] = [
      literal: 'Medicamentos',
      Icon: MedicationIcon,
    },
-  // {
-  //   route: ROUTES.inventory,
-  //   literal: 'Inventory',
-  //   Icon: AttachMoneyIcon,
-  // },
+  {
+    route: ROUTES.enfermedades,
+    literal: 'Enfermedades',
+    Icon: CoronavirusOutlinedIcon,
+  },
 ];

@@ -211,7 +211,7 @@ const Medicamentos: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.getMedicamentos.edges.node.((medicamento, index) => (
+            {data.getMedicamentos.edges.map((medicamento, index) => (
               <TableRow
                 key={medicamento.node.id_medicamento}
                 sx={{

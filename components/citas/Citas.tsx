@@ -21,7 +21,6 @@ import ListIcon from "@mui/icons-material/List";
 import SearchIcon from "@mui/icons-material/Search";
 import { Cita, useGetCitasQuery } from "../../graphql/types";
 import TableSkeleton from "../../utils/TableSkeleton";
-import { FormularioCita } from "./FormularioCita";
 import { CitaRow } from "./CitaRow";
 import dayjs from "dayjs";
 
@@ -56,11 +55,16 @@ const CollapsibleTable: React.FC<CollapsibleTableProps> = ({ fecha }) => {
     setPage(0);
   };
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -95,7 +99,7 @@ const CollapsibleTable: React.FC<CollapsibleTableProps> = ({ fecha }) => {
             variant="outlined"
             value={searchTerm}
             onChange={handleSearchChange}
-            sx={{ marginRight: 2, width: '300px' }}
+            sx={{ marginRight: 2, width: "300px" }}
             InputProps={{
               endAdornment: (
                 <IconButton>
